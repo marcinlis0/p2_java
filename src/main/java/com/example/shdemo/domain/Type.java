@@ -18,6 +18,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
+@NamedQueries({ 
+	@NamedQuery(name = "type.all", query = "Select t from Type t"),
+	@NamedQuery(name = "findByName", query = "from Type t where t.name=:name"),
+})
 public class Type {
 	
 	@Id

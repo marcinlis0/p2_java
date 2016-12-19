@@ -8,6 +8,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+@Entity
+@NamedQueries({ 
+	@NamedQuery(name = "equipment.all", query = "Select e from Equipment e"),
+    @NamedQuery(name = "findByType", query = "from Equipment e where e.type=:type"),
+})
 public class Equipment {
 	
 	@Id
