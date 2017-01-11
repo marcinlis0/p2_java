@@ -25,15 +25,15 @@ public class RentMangerHibernateImpl implements RentManager {
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		this.sessionFactory = sessionFactory;
 	}
-	
+
 	@Override
 	public void AddType(Type type) {
 		sessionFactory.getCurrentSession().persist(type);
-		
+
 	}
 
 	@Override
-	public Type GetTypeById(int id) {
+	public Type GetTypeById(long id) {
 		return (Type) sessionFactory.getCurrentSession().get(Type.class, id);
 	}
 
@@ -43,46 +43,53 @@ public class RentMangerHibernateImpl implements RentManager {
 		return sessionFactory.getCurrentSession().getNamedQuery("type.all").list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<Type> GetTypeByName(String name) {
-		return sessionFactory.getCurrentSession().getNamedQuery("findByName")
-				.setString("name", name).list();
+	public Type GetTypeByName(String name) {
+		return (Type) sessionFactory.getCurrentSession().getNamedQuery("findByName").setString("name", name)
+				.uniqueResult();
 	}
 
 	@Override
-	public void DeleteAllTypes() {
-		// TODO Auto-generated method stub
-		
+	public void DeleteType(Type type) {
+		Type typeToDelete = (Type) sessionFactory.getCurrentSession().get(Type.class, type.getId());
+
+		List<Equipment> equipments = GetAllEquipments();
+
+		for (Equipment e : equipments) {
+			if (typeToDelete == e.getType()) {
+				e.setType(null);
+				sessionFactory.getCurrentSession().update(e);
+			}
+		}
+		sessionFactory.getCurrentSession().delete(typeToDelete);
 	}
 
 	@Override
-	public void DeleteTypeByName(String name) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean UpdateTypeById(int id, Type newType) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean UpdateType(Type type) {
+		try {
+			sessionFactory.getCurrentSession().update(type);
+		} catch (Exception ex) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public void AddEquipment(Equipment equipment) {
 		sessionFactory.getCurrentSession().persist(equipment);
-		
+
 	}
 
 	@Override
-	public Equipment GetEquipmentById(int id) {
+	public Equipment GetEquipmentById(long id) {
 		return (Equipment) sessionFactory.getCurrentSession().get(Equipment.class, id);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Equipment> GetEquipmentByType(String type) {
-		return sessionFactory.getCurrentSession().getNamedQuery("findByType")
-				.setString("type", type).list();
+		return sessionFactory.getCurrentSession().getNamedQuery("findByType").setString("type", type).list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,29 +99,25 @@ public class RentMangerHibernateImpl implements RentManager {
 	}
 
 	@Override
-	public void DeleteAllEquipments() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void DeleteEquipmentByType(Type type) {
-		// TODO Auto-generated method stub
-		
+		List<Equipment> equipments = GetAllEquipments();
+
+		for (Equipment e : equipments) {
+			if (e.getType() == type) {
+				Equipment equipmentToDelete = (Equipment) sessionFactory.getCurrentSession().get(Equipment.class, e.getId());
+				sessionFactory.getCurrentSession().delete(equipmentToDelete);
+			}
+		}
 	}
 
 	@Override
-	public void UpdateEquipmentById(int id, Equipment newEquipment) {
-		// TODO Auto-generated method stub
-		
+	public boolean UpdateEquipment(Equipment equipment) {
+		try {
+			sessionFactory.getCurrentSession().update(equipment);
+		} catch (Exception ex) {
+			return false;
+		}
+		return true;
 	}
-
-	@Override
-	public void UpdateEquipmentByType(Type type, Equipment newEquipment) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	
 
 }

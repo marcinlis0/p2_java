@@ -11,7 +11,7 @@ import javax.persistence.NamedQuery;
 @Entity
 @NamedQueries({ 
 	@NamedQuery(name = "equipment.all", query = "Select e from Equipment e"),
-    @NamedQuery(name = "findByType", query = "from Equipment e where e.type=:type"),
+    @NamedQuery(name = "findByType", query = "from Equipment e where e.type.name=:type"),
 })
 public class Equipment {
 	
@@ -31,10 +31,10 @@ public class Equipment {
 	public void setId(long id) {
 		this.id = id;
 	}
-	public Type getTypeId() {
+	public Type getType() {
 		return type;
 	}
-	public void setTypeId(Type type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 	public String getModel() {
